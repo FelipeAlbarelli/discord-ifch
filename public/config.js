@@ -7,7 +7,11 @@ var config = {
     usersColletionName: "users",
     guildsCollectionName: "guilds",
     pomodoro: {
-        intervalMs: 60 * 1000
+        intervalMs: 10 * 1000,
+        restMin: .5,
+        workMin: .5,
+        longRestMin: 15,
+        pomodorosUntilLongRest: 2
     }
 };
 exports.default = config;

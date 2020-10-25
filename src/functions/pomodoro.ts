@@ -1,6 +1,9 @@
 import config  from '../../config';
 import {setTimeout as setTimeoutNode} from 'timers';
-const intervalMs = config.pomodoro.intervalMs; 
+
+const {
+    intervalMs, longRestMin ,pomodorosUntilLongRest ,restMin ,workMin
+} = config.pomodoro
 
 export const secondsToTimerStr = (seconds : number) => {
     const minutes = Math.floor(seconds / 60);
@@ -31,9 +34,10 @@ export class PomodoroMachine {
             this.finishPomodoro = finishPomodoro;
             this.finishRest = finishRest;
             this.finishLongRest = finishCicle;
+            console.log('constructing pomdoro machine')
     }
 
-    startRest(ms = 5 * 60 * 1000) {
+    startRest(ms = restMin * 60 * 1000) {
         let t = 0;
         this.pomodoring = false;
         this.interval = setInterval(() => {
@@ -42,7 +46,7 @@ export class PomodoroMachine {
         }, intervalMs);
         this.timeOut = setTimeoutNode(() => {
             clearInterval(this.interval);
-            if (this.c === 4) {
+            if (this.c === pomodorosUntilLongRest) {
                 this.c =0;
                 this.finishLongRest();
             } else {
@@ -52,7 +56,8 @@ export class PomodoroMachine {
         }, ms)
     }
 
-    start( ms = 25 * 60 * 1000  ) {
+    start( ms = workMin * 60 * 1000  ) {
+        console.log('start pomodoro' , ms)
         let t = 0;
         this.pomodoring = true;
         this.interval = setInterval(() => {
@@ -64,9 +69,9 @@ export class PomodoroMachine {
         this.timeOut = setTimeoutNode(() => {
             this.c += 1;
             clearInterval(this.interval);
-            this.finishPomodoro();
-            if (this.c === 4) {
-                this.startRest(15 * 60 * 1000)
+            this.finishPomodoro(this.c);
+            if (this.c === pomodorosUntilLongRest) {
+                this.startRest(longRestMin * 60 * 1000)
             } else {
                 this.startRest()
             }

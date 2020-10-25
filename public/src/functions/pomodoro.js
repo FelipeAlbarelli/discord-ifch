@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PomodoroMachine = exports.secondsToTimerStr = void 0;
 var config_1 = __importDefault(require("../../config"));
 var timers_1 = require("timers");
-var intervalMs = config_1.default.pomodoro.intervalMs;
+var _a = config_1.default.pomodoro, intervalMs = _a.intervalMs, longRestMin = _a.longRestMin, pomodorosUntilLongRest = _a.pomodorosUntilLongRest, restMin = _a.restMin, workMin = _a.workMin;
 exports.secondsToTimerStr = function (seconds) {
     var minutes = Math.floor(seconds / 60);
     var remainSeconds = seconds - (minutes * 60);
@@ -21,10 +21,11 @@ var PomodoroMachine = /** @class */ (function () {
         this.finishPomodoro = finishPomodoro;
         this.finishRest = finishRest;
         this.finishLongRest = finishCicle;
+        console.log('constructing pomdoro machine');
     }
     PomodoroMachine.prototype.startRest = function (ms) {
         var _this = this;
-        if (ms === void 0) { ms = 5 * 60 * 1000; }
+        if (ms === void 0) { ms = restMin * 60 * 1000; }
         var t = 0;
         this.pomodoring = false;
         this.interval = setInterval(function () {
@@ -33,7 +34,7 @@ var PomodoroMachine = /** @class */ (function () {
         }, intervalMs);
         this.timeOut = timers_1.setTimeout(function () {
             clearInterval(_this.interval);
-            if (_this.c === 4) {
+            if (_this.c === pomodorosUntilLongRest) {
                 _this.c = 0;
                 _this.finishLongRest();
             }
@@ -45,7 +46,8 @@ var PomodoroMachine = /** @class */ (function () {
     };
     PomodoroMachine.prototype.start = function (ms) {
         var _this = this;
-        if (ms === void 0) { ms = 25 * 60 * 1000; }
+        if (ms === void 0) { ms = workMin * 60 * 1000; }
+        console.log('start pomodoro', ms);
         var t = 0;
         this.pomodoring = true;
         this.interval = setInterval(function () {
@@ -55,9 +57,9 @@ var PomodoroMachine = /** @class */ (function () {
         this.timeOut = timers_1.setTimeout(function () {
             _this.c += 1;
             clearInterval(_this.interval);
-            _this.finishPomodoro();
-            if (_this.c === 4) {
-                _this.startRest(15 * 60 * 1000);
+            _this.finishPomodoro(_this.c);
+            if (_this.c === pomodorosUntilLongRest) {
+                _this.startRest(longRestMin * 60 * 1000);
             }
             else {
                 _this.startRest();
