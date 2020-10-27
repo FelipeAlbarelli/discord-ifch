@@ -86,7 +86,7 @@ export const handleMessage = (message: Message) => {
             message.channel.send('pomodoro cancelado')
             break;
         case 'status':
-            message.send(
+            message.channel.send(
               guildsPomdoros[id].active ?
               (guildsPomdoros[id].pomodoring ?
               'em concentração' :
