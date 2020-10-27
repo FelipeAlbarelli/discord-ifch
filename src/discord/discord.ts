@@ -40,7 +40,6 @@ export const handleMessage = (message: Message) => {
                 if (guildsTimersMsgs[id] !== undefined) {
                     guildsTimersMsgs[id].edit(secondsToTimerStr(ms/1000)).catch(hEr)
                 };
-                console.log('tick');
             },
             (numPomo: number) => {
                 message.channel.send(`fim do pomodoro #${numPomo}`).catch(hEr);
