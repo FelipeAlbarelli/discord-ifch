@@ -88,7 +88,8 @@ export const handleMessage = (message: Message) => {
         case 'continue':
 
             break;
-        case 'log':
+        case 'sound':
+            playSound(message, "valendo");
             break;
         default:
             break;
