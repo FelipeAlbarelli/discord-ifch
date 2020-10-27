@@ -83,15 +83,23 @@ export const handleMessage = (message: Message) => {
             break;
         case 'cancelar':
             guildsPomdoros[id].cancelOne();
+            message.channel.send('pomodoro cancelado')
             break;
-        case 'continue':
-
+        case 'status':
+            message.send(
+              guildsPomdoros[id].active ?
+              (guildsPomdoros[id].pomodoring ?
+              'em concentração' :
+              'em pausa') :
+              'bot inativo'
+            )
             break;
         case 'sound':
             playSound(message, "valendo");
             break;
         default:
-            break;
+          message.reply('comando inexistente');
+          break;
     }
 
 } 
