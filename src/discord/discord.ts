@@ -40,7 +40,6 @@ export const handleMessage = (message: Message) => {
                 if (guildsTimersMsgs[id] !== undefined) {
                     guildsTimersMsgs[id].edit(secondsToTimerStr(ms/1000)).catch(hEr)
                 };
-                console.log('tick');
             },
             (numPomo: number) => {
                 message.channel.send(`fim do pomodoro #${numPomo}`).catch(hEr);
@@ -84,15 +83,31 @@ export const handleMessage = (message: Message) => {
             break;
         case 'cancelar':
             guildsPomdoros[id].cancelOne();
+            message.channel.send('pomodoro cancelado')
             break;
-        case 'continue':
-
+        case 'status':
+            message.channel.send(
+              guildsPomdoros[id].active ?
+              (guildsPomdoros[id].pomodoring ?
+              'em concentração' :
+              'em pausa') :
+              'bot inativo'
+            )
             break;
-        case 'sound':
+        case 'test-sound':
             playSound(message, "valendo");
             break;
+        case 'help':
+          message.channel.send(
+            `lista de comandos:\n`+
+            `${prefix}start: começa ciclo de pomodoro`+
+            `${prefix}cancelar: cancela ciclo de pomoro` +
+            `${prefix}status: informa se o estado atual é "concentração", "pausa" ou "inativo"`
+            );
+          break;
         default:
-            break;
+          message.reply(`comando inexistente, use ${prefix}help para uma breve lista de comandos`);
+          break;
     }
 
 } 

@@ -26,7 +26,6 @@ export const playSound = async (message: Message , sound : sound) => {
             
         dispatcher.on('start', () => {
             console.log('audio.mp3 is now playing!');
-
         });
 
         dispatcher.on('finish', () => {

@@ -19,6 +19,7 @@ export class PomodoroMachine {
     interval?: NodeJS.Timeout;
     timeOut?: NodeJS.Timeout;
     pomodoring?: boolean;
+    active = false;
 
     tick: Function;
     finishPomodoro: Function;
@@ -65,6 +66,7 @@ export class PomodoroMachine {
             this.tick(t * intervalMs)
         },
         intervalMs);
+        this.active = true;
 
         this.timeOut = setTimeoutNode(() => {
             this.c += 1;
@@ -82,6 +84,7 @@ export class PomodoroMachine {
         if (this.interval) clearInterval(this.interval);
         if (this.timeOut) clearInterval(this.timeOut);
         this.pomodoring = false;
+        this.active = false;
     }
 
 
