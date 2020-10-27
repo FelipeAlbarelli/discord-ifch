@@ -94,11 +94,19 @@ export const handleMessage = (message: Message) => {
               'bot inativo'
             )
             break;
-        case 'sound':
+        case 'test-sound':
             playSound(message, "valendo");
             break;
+        case 'help':
+          message.channel.send(
+            `lista de comandos:\n`+
+            `${prefix}start: começa ciclo de pomodoro`+
+            `${prefix}cancelar: cancela ciclo de pomoro` +
+            `${prefix}status: informa se o estado atual é "concentração", "pausa" ou "inativo"`
+            );
+          break;
         default:
-          message.reply('comando inexistente');
+          message.reply(`comando inexistente, use ${prefix}help para uma breve lista de comandos`);
           break;
     }
 
