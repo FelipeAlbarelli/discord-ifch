@@ -4,8 +4,8 @@ import {readFile} from 'fs';
 type sound = 'valendo' | 'parou';
 
 const soundsLocations = {
-    'valendo' : 'gs://pomodoro-20272.appspot.com/audios/valendo.mp3',
-    'parou' : 'gs://pomodoro-20272.appspot.com/audios/parou.mp3'
+    'valendo' : 'https://soundcloud.com/felipe-albarelli-454440458/valendo?in=felipe-albarelli-454440458/sets/sons-pomdoro',
+    'parou' : 'https://soundcloud.com/felipe-albarelli-454440458/parou?in=felipe-albarelli-454440458/sets/sons-pomdoro'
 }
 
 

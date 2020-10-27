@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev1": "tsc -w",
-    "dev2": "nodemon public/src/index.js",
+    "dev2": "nodemon public/index.js",
     "start": "tsc && node index.js"
   },
   "repository": {

@@ -1,20 +1,25 @@
-import {db} from './config';
-import { Client } from 'discord.js';
-import { handleMessage } from './discord/discord';
 
-const discordClient = new Client();
+// import { Client } from 'discord.js';
+// import { handleMessage } from './discord/discord';
 
-const botToken = process.env.BOTTOKEN;
+// const discordClient = new Client();
 
-discordClient.login(botToken)
-.then(() => {
-        console.log('Discord bot connected :D')
-})
-.catch(err => {
-console.log('Error: cant connect to discord.js');
-console.error(err);
-});
+// const botToken = process.env.BOTTOKEN;
 
-discordClient.on('message', async message => {
-handleMessage(message);
-});
+// discordClient.login(botToken)
+// .then(() => {
+//         console.log('Discord bot connected :D')
+// })
+// .catch(err => {
+// console.log('Error: cant connect to discord.js');
+// console.error(err);
+// });
+
+// discordClient.on('message', message => {
+//         handleMessage(message);
+// });
+if (process.env.USERDOMAIN === 'FELIPEALBARELLI') {
+    console.log('local')
+} else {
+	console.log('prod')
+}
