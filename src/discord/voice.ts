@@ -1,6 +1,4 @@
 import { Message } from "discord.js";
-import {readFile} from 'fs';
-import ytdl from 'ytdl-core'
 
 type sound = 'valendo' | 'parou';
 
