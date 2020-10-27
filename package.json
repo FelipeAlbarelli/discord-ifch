@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev1": "tsc -w",
     "dev2": "nodemon public/src/index.js",
-    "start": "ts-node index.js"
+    "start": "tsc && node index.js"
   },
   "repository": {
     "type": "git",
@@ -23,14 +23,8 @@
     "@discordjs/opus": "^0.3.2",
     "discord.js": "^12.4.0",
     "dotenv": "^8.2.0",
-    "events": "^3.2.0",
     "ffmpeg-static": "^4.2.7",
-    "firebase": "^7.24.0",
-    "firebase-admin": "^9.3.0",
-    "moment": "^2.29.1",
-    "mongodb": "^3.6.2",
-    "pauseable": "^0.3.2",
     "ts-node": "^9.0.0",
-    "ytdl-core": "^3.4.2"
+    "typescript": "^4.0.5"
   }
 }

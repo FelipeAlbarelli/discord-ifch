@@ -1,10 +1,9 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -35,27 +34,21 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
-require('dotenv').config();
 var discord_js_1 = require("discord.js");
 var discord_1 = require("./discord/discord");
-var config_1 = require("./db/config");
-// import { prefix, dbName, pomodorosCollectionName, usersColletionName, guildsCollectionName } from '../config';
-var discordToken = process.env.BOTTOKEN;
 var discordClient = new discord_js_1.Client();
-var ref = config_1.db.collection('pomodoros').doc('felipe').get().then(function (result) {
-    if (result.exists) {
-        console.log(result.data());
-    }
-    else {
-        console.log('not found');
-    }
-}).catch(console.error);
-discordClient.once('ready', function () {
-    console.log('Discord is Ready :D');
+var botToken = process.env.BOTTOKEN;
+discordClient.login(botToken)
+    .then(function () {
+    console.log('Discord bot connected :D');
+})
+    .catch(function (err) {
+    console.log('Error: cant connect to discord.js');
+    console.error(err);
 });
-discordClient.login(discordToken);
-discordClient.on('message', function (message) { return __awaiter(void 0, void 0, void 0, function () {
+discordClient.on('message', function (message) { return __awaiter(_this, void 0, void 0, function () {
     return __generator(this, function (_a) {
         discord_1.handleMessage(message);
         return [2 /*return*/];

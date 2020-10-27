@@ -3,7 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PomodoroMachine = exports.secondsToTimerStr = void 0;
 var config_1 = __importDefault(require("../../config"));
 var timers_1 = require("timers");
 var _a = config_1.default.pomodoro, intervalMs = _a.intervalMs, longRestMin = _a.longRestMin, pomodorosUntilLongRest = _a.pomodorosUntilLongRest, restMin = _a.restMin, workMin = _a.workMin;
