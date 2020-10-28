@@ -1,16 +1,27 @@
+if (process.env.NODE_ENV === 'local') {
+	console.log('local')
+	require('dotenv').config()
+} else {
+	console.log('prod')
+}
+
 const defaultConfig = {
-    prefix: "¬",
+    prefix: "*",
     dbName: "pomodorosDb",
     pomodorosCollectionName: "pomodoros",
     usersColletionName: "users",
     guildsCollectionName: "guilds",
     pomodoro : {
-        intervalMs : 30*1000,
-        restMin: 5,
-        workMin: 25,
-        longRestMin: 15,
-        pomodorosUntilLongRest: 4
-    }
+        intervalMs : 2*1000,
+        restMin: .3,
+        workMin: .3,
+        longRestMin: .3,
+        pomodorosUntilLongRest: 2
+    },
+    local : process.env.NODE_ENV === 'local',
+    botToken : process.env.NODE_ENV === 'local' ?
+        process.env.BOTTOKENTEST :
+        process.env.BOTTOKEN
 }
 
 export default defaultConfig;
