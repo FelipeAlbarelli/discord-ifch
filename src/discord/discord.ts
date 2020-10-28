@@ -100,9 +100,9 @@ export const handleMessage = (message: Message) => {
         case 'help':
           message.channel.send(
             `lista de comandos:\n`+
-            `${prefix}start: começa ciclo de pomodoro`+
-            `${prefix}cancelar: cancela ciclo de pomoro` +
-            `${prefix}status: informa se o estado atual é "concentração", "pausa" ou "inativo"`
+            ` ${prefix}start: começa ciclo de pomodoro\n`+
+            ` ${prefix}cancelar: cancela ciclo de pomoro\n` +
+            ` ${prefix}status: informa se o estado atual é "concentração", "pausa" ou "inativo"`
             );
           break;
         default:
