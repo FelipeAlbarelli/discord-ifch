@@ -1,10 +1,11 @@
-const Database = require("@replit/database")
+import * as admin from 'firebase-admin';
+require('dotenv').config()
 
-const db = new Database();
+const serviceAccount = JSON.parse(process.env.FIREBASE_CONFIG);
 
-export const createPomdoro = async (pomodoro) => {
-  try {
-  } catch (err) {
-    console.error(err);
-  }
-};
+const app = admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://pomodoro-20272.firebaseio.com"
+});
+
+export const db = app.firestore();
