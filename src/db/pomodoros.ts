@@ -22,6 +22,17 @@ export const createUser = async (user : User) => {
     }
 }
 
+
+export const countUserPomdoros = async (discordUserId: string , when : 'always' | 'this_week' |'last_week' | 'this_month' | 'last_month' ) => {
+    try {
+        const ref = pomodorosDb.where('userId' , '==' , discordUserId).get();
+        return (await ref).size;
+    } catch (err) {
+        herror(err);
+        return null;
+    }
+}
+
 export const addPomodoros = async ( vc: VoiceChannel) => {
     try {
         const users = vc.members.map( mem => ({
@@ -31,7 +42,7 @@ export const addPomodoros = async ( vc: VoiceChannel) => {
         users.forEach( async user => {
             await pomodorosDb.add(user)
         })
-    }catch (err) {
+    } catch (err) {
         herror(err)
     }
 }

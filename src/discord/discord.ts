@@ -1,5 +1,6 @@
-import {  Message  } from 'discord.js';
+import {  DMChannel, Message  } from 'discord.js';
 import config  from '../config'
+import { addPomodoros, countUserPomdoros } from '../db/pomodoros';
 import { secondsToTimerStr , PomodoroMachine } from '../functions/pomodoro';
 import { playSound } from './voice';
 
@@ -7,6 +8,7 @@ const hEr = (err: any) => {
     console.error(err)
 }
 
+const isDm = (msg: Message) => msg.channel instanceof DMChannel; 
 
 const {prefix} = config;
 
@@ -16,9 +18,16 @@ const guildsTimersMsgs: {[key: string]: Message;} = {};
 
 export const handleMessage = (message: Message) => {
 
-    console.log(`recivied msg ${message.content}`);
+    console.log(`got msg ${message.content}`);
+    
+    if (isDm(message) && !message.author.bot){
+        countUserPomdoros(message.author.id, 'always').then( r => {
+            message.reply(`pomodoros registrados : ${r}`)
+        })
+    }
 
     if (!message.content.startsWith(prefix) || message.author.bot) return;
+
 
     const _args = message.content.slice(prefix.length).trim().split(/ +/);
     const command =  _args.length ? _args[0].toLowerCase() : null;
@@ -46,7 +55,10 @@ export const handleMessage = (message: Message) => {
                 playSound(message , 'parou').catch(hEr);
                 message.channel.send(secondsToTimerStr(0)).then((sentMsg) => {
                     guildsTimersMsgs[id] = sentMsg;
-                }).catch(hEr)
+                }).catch(hEr);
+                addPomodoros(message.member.voice.channel).then( () => {
+                    console.log('pomodoro registrado em fb com sucesso')
+                }).catch(hEr);
             },
             () => {
                 playSound(message, "valendo").catch(hEr);
