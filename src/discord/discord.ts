@@ -1,5 +1,5 @@
 import {  DMChannel, Message  } from 'discord.js';
-import config  from '../config'
+import defaultConfig  from '../config'
 import { addPomodoros, countUserPomdoros } from '../db/pomodoros';
 import { secondsToTimerStr , PomodoroMachine } from '../functions/pomodoro';
 import { playSound } from './voice';
@@ -10,7 +10,7 @@ const hEr = (err: any) => {
 
 const isDm = (msg: Message) => msg.channel instanceof DMChannel; 
 
-const {prefix} = config;
+const {prefix} = defaultConfig;
 
 const guildsPomdoros: { [key: string]: PomodoroMachine;} = {}
 

@@ -1,9 +1,9 @@
-import config  from '../config';
+import defaultConfig  from '../config';
 import {setTimeout as setTimeoutNode} from 'timers';
 
 const {
     intervalMs, longRestMin ,pomodorosUntilLongRest ,restMin ,workMin
-} = config.pomodoro
+} = defaultConfig.pomodoro
 
 export const secondsToTimerStr = (seconds : number) => {
     const minutes = Math.floor(seconds / 60);

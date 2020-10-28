@@ -1,4 +1,4 @@
-const config = {
+const defaultConfig = {
     prefix: "¬",
     dbName: "pomodorosDb",
     pomodorosCollectionName: "pomodoros",
@@ -13,4 +13,4 @@ const config = {
     }
 }
 
-export default config;
+export default defaultConfig;
