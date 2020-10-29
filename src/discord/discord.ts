@@ -84,6 +84,11 @@ export const handleMessage = (message: Message) => {
     const guildId = message.guild ? message.guild.id : null;
     if (guildId === null) return;
 
+    if (voiceChanel === null) {
+        message.reply('junte-se a um canal de voz para usar os comandos do bot');
+        return;
+    }
+
     handleCommandTextChanel(channel,voiceChanel,command);
 
 } 

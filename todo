@@ -17,7 +17,8 @@ ao fim de intervalo longo perguntar se users desejam fazer mais um
 só marcar pomodoro para os users que estiverem em grande parte do pomodoro (atualmente marca para todos que estão no fim)
 add comando 'ver config'
 tocar musica do airton sena quando alguem bater um recorde de pomodoro
-programar pomodoro
+programar pomodoro (pomodoro em 3 min)
+!!!separar handleMsg entre msgs que precisam estar em canal de voz e que não precisam!!!
 
 coisas engraçadas:
   comando 'bora cantina do belo'
