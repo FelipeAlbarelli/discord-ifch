@@ -5,6 +5,10 @@ if (process.env.NODE_ENV === 'local') {
 	console.log('prod')
 }
 
+export const log = msg => {
+    process.env.NODE_ENV ? console.log(msg) : null;
+}
+
 const defaultConfig = {
     prefix: "*",
     dbName: "pomodorosDb",

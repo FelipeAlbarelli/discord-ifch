@@ -18,7 +18,6 @@ discordClient.login(botToken)
 var http = require('http');
 
 http.createServer(function (req, res) {
-	console.log('pong');
 	res.write("I'm alive");
 	res.end();
 }).listen(8080);

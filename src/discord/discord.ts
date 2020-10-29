@@ -1,116 +1,55 @@
-import {  DMChannel, Message  } from 'discord.js';
+import {  DMChannel, Message, NewsChannel, TextChannel, VoiceChannel  } from 'discord.js';
 import defaultConfig  from '../config'
 import { addPomodoros, countUserPomdoros } from '../db/pomodoros';
 import { secondsToTimerStr , PomodoroMachine } from '../functions/pomodoro';
+import { createDiscordPomodoro } from './discordPomodoro';
 import { playSound } from './voice';
 
-const hEr = (err: any) => {
-    console.error(err)
-}
-
-const isDm = (msg: Message) => msg.channel instanceof DMChannel; 
 
 const {prefix} = defaultConfig;
 
 const guildsPomdoros: { [key: string]: PomodoroMachine;} = {}
 
-const guildsTimersMsgs: {[key: string]: Message;} = {};
+const handleDM = (message: Message, voiceChanel) => {
+    countUserPomdoros(message.author.id, 'always').then( r => {
+        message.reply(`pomodoros registrados : ${r}`)
+    })
+}
 
-export const handleMessage = (message: Message) => {
+const handleCommandTextChanel = (textC: TextChannel, voiceC: VoiceChannel, command: string, pars?: string[]) => {
 
-    console.log(`got msg ${message.content}`);
-    
-    if (isDm(message) && !message.author.bot){
-        countUserPomdoros(message.author.id, 'always').then( r => {
-            message.reply(`pomodoros registrados : ${r}`)
-        })
-    }
-
-    if (!message.content.startsWith(prefix) || message.author.bot) return;
-
-
-    const _args = message.content.slice(prefix.length).trim().split(/ +/);
-    const command =  _args.length ? _args[0].toLowerCase() : null;
-    // const args = _args.length > 1 ? _args.slice(1) : [];
-
-    // console.log(message.guild.id);
-    // console.log(message.channel);
-    const id = message.guild ? message.guild.id : null;
-    if (id === null) return;
-    console.log(`pomodoroMachine:`);
-    console.log(guildsPomdoros[id]);
-
-
-
-    if (guildsPomdoros[id] === undefined) {
-        console.log('creating pomodoro machine')
-        guildsPomdoros[id] = new PomodoroMachine(
-            (ms: number) => {
-                if (guildsTimersMsgs[id] !== undefined) {
-                    guildsTimersMsgs[id].edit(secondsToTimerStr(ms/1000)).catch(hEr)
-                };
-            },
-            (numPomo: number) => {
-                message.channel.send(`fim do pomodoro #${numPomo}`).catch(hEr);
-                playSound(message , 'parou').catch(hEr);
-                message.channel.send(secondsToTimerStr(0)).then((sentMsg) => {
-                    guildsTimersMsgs[id] = sentMsg;
-                }).catch(hEr);
-                addPomodoros(message.member.voice.channel).then( () => {
-                    console.log('pomodoro registrado em fb com sucesso')
-                }).catch(hEr);
-            },
-            () => {
-                playSound(message, "valendo").catch(hEr);
-                message.channel.send('fim da pausa').catch(hEr);
-                message.channel.send(secondsToTimerStr(0)).then((sentMsg) => {
-                    guildsTimersMsgs[id] = sentMsg;
-                }).catch(hEr)
-            },
-            () => {
-                message.channel.send('fim da pausa longa').catch(hEr);
-                delete guildsTimersMsgs[id];
-                delete guildsPomdoros[id];
-            }
-        )
-    }
-
-
-
-    // Voice only works in guilds, if the message does not come from a guild,
-    // we ignore it
-    if (!message.guild) return;
+    const voiceId = voiceC.id;
 
     switch (command) {
         case 'start':
-            playSound(message, "valendo").catch(hEr);
-            console.log('start command')
-            guildsPomdoros[id].start();
-            message.channel.send(secondsToTimerStr(0)).then((sentMsg) => {
-                guildsTimersMsgs[id] = sentMsg;
-            }).catch(err => {
-                console.log('error sending msg');
-                console.error(err)
-            })
+            if (guildsPomdoros[voiceId] === undefined) {
+                guildsPomdoros[voiceId] = createDiscordPomodoro(textC, voiceC);
+            }
+            // playSound(voiceC, "valendo").catch(hEr);
+            if (guildsPomdoros[voiceId].pomodoring === true ) {
+                textC.send(`já está ocorrendo um pomodoro no canal ${textC.name}`);
+                return;
+            }
+            guildsPomdoros[voiceId].start();
             break;
         case 'cancelar':
-            guildsPomdoros[id].cancelOne();
-            message.channel.send('pomodoro cancelado')
+            guildsPomdoros[voiceId].cancelOne();
+            textC.send('pomodoro cancelado')
             break;
         case 'status':
-            message.channel.send(
-              guildsPomdoros[id].active ?
-              (guildsPomdoros[id].pomodoring ?
+            textC.send(
+              guildsPomdoros[voiceId].active ?
+              (guildsPomdoros[voiceId].pomodoring ?
               'em concentração' :
               'em pausa') :
               'bot inativo'
             )
             break;
         case 'test-sound':
-            playSound(message, "valendo");
+            playSound(voiceC, "valendo");
             break;
         case 'help':
-          message.channel.send(
+          textC.send(
             `lista de comandos:\n`+
             ` ${prefix}start: começa ciclo de pomodoro\n`+
             ` ${prefix}cancelar: cancela ciclo de pomoro\n` +
@@ -118,8 +57,33 @@ export const handleMessage = (message: Message) => {
             );
           break;
         default:
-          message.reply(`comando inexistente, use ${prefix}help para uma breve lista de comandos`);
+          textC.send(`comando ${command} inexistente, use ${prefix}help para uma breve lista de comandos`);
           break;
     }
+}
+
+export const handleMessage = (message: Message) => {
+
+    if (message.author.bot) return;
+    
+    const channel = message.channel;
+    const voiceChanel = message.member.voice.channel;
+
+    if (channel instanceof DMChannel){
+        handleDM(message, voiceChanel);
+        return;
+    } else if (channel instanceof NewsChannel) {
+        return;
+    } 
+
+    if (!message.content.startsWith(prefix)) return;
+
+    const _args = message.content.slice(prefix.length).trim().split(/ +/);
+    const command =  _args.length ? _args[0].toLowerCase() : null;
+
+    const guildId = message.guild ? message.guild.id : null;
+    if (guildId === null) return;
+
+    handleCommandTextChanel(channel,voiceChanel,command);
 
 } 

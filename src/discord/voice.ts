@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Message, VoiceChannel } from "discord.js";
 
 type sound = 'valendo' | 'parou';
 
@@ -13,9 +13,9 @@ const soundsLocations = {
 // })
 
 
-export const playSound = async (message: Message , sound : sound) => {
+export const playSound = async (vc: VoiceChannel , sound : sound) => {
     try {
-        const connection = await message.member?.voice.channel?.join();
+        const connection = await vc.join();
         // console.log(connection);
         const dispatcher = connection?.play(
             // ytdl('https://youtu.be/aJctI5q2UY0')
