@@ -1,6 +1,6 @@
 import {  DMChannel, Message, NewsChannel, TextChannel, VoiceChannel  } from 'discord.js';
 import defaultConfig  from '../config'
-import { addPomodoros, countUserPomdoros } from '../db/pomodoros';
+import { addPomodoro, countUserPomdoros } from '../db/pomodoros';
 import { secondsToTimerStr , PomodoroMachine } from '../functions/pomodoro';
 import { createDiscordPomodoro } from './discordPomodoro';
 import { playSound } from './voice';
@@ -67,7 +67,7 @@ export const handleMessage = (message: Message) => {
     if (message.author.bot) return;
     
     const channel = message.channel;
-    const voiceChanel = message.member.voice.channel;
+    const voiceChanel = message.member?.voice.channel;
 
     if (channel instanceof DMChannel){
         handleDM(message, voiceChanel);

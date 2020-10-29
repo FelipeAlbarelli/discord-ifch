@@ -3,6 +3,10 @@ import {Guild,Pomodoro,dbUser} from '../models/db';
 import { User, VoiceChannel } from 'discord.js';
 import { firestore } from 'firebase-admin';
 
+const names = {
+    pomodoros: 'pomodoros',
+    users: 'users'
+}
 
 const pomodorosDb = db.collection('pomdoros');
 
@@ -23,24 +27,35 @@ export const createUser = async (user : User) => {
 }
 
 
-export const countUserPomdoros = async (discordUserId: string , when : 'always' | 'this_week' |'last_week' | 'this_month' | 'last_month' ) => {
+export const countUserPomdoros = async (
+    discordUserId: string , 
+    when : 'always' | 'this_week' |'last_week' | 'this_month' | 'last_month'
+): Promise<number> => {
     try {
-        const ref = pomodorosDb.where('userId' , '==' , discordUserId).get();
-        return (await ref).size;
+        console.log(discordUserId);
+        const userRef = await usersDb.where('discordId','==',discordUserId).limit(1).get();
+        const userId = userRef.docs[0].id;
+        console.log(userId);
+        return (await usersDb.doc(userId).collection(names.pomodoros).get()).size;
     } catch (err) {
         herror(err);
         return null;
     }
 }
 
-export const addPomodoros = async ( vc: VoiceChannel) => {
+export const addPomodoro = async ( discordId: string) => {
     try {
-        const users = vc.members.map( mem => ({
-            userId : mem.user.id,
+        let userId;
+        const userRef = await usersDb.where('discordId' , '==' , discordId).limit(1).get();
+        if (userRef.empty) {
+            userId = (await usersDb.add({discordId})).id;
+            console.log('user novo' , userId)
+        } else {
+            userId = userRef.docs[0].id;
+            console.log('user velho' , userId);
+        }
+        usersDb.doc(userId).collection(names.pomodoros).add({
             date: firestore.Timestamp.now()
-        }))
-        users.forEach( async user => {
-            await pomodorosDb.add(user)
         })
     } catch (err) {
         herror(err)

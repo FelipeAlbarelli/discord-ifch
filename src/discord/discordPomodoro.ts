@@ -1,9 +1,12 @@
 import { Message, TextChannel, VoiceChannel } from "discord.js";
-import { addPomodoros } from "../db/pomodoros";
+import { addPomodoro } from "../db/pomodoros";
 import { PomodoroMachine, secondsToTimerStr } from "../functions/pomodoro";
 import { playSound } from "./voice";
 
-export const createDiscordPomodoro = ( textChanel: TextChannel ,voiceChanel: VoiceChannel, onEndLongRest?: Function) => {
+export const createDiscordPomodoro = ( 
+    textChanel: TextChannel ,
+    voiceChanel: VoiceChannel
+) => {
     let timerMsg;
     textChanel.send(secondsToTimerStr(0)).then( sentMsg => {
         timerMsg = sentMsg;
@@ -19,9 +22,9 @@ export const createDiscordPomodoro = ( textChanel: TextChannel ,voiceChanel: Voi
             textChanel.send(secondsToTimerStr(0)).then((sentMsg) => {
                 timerMsg = sentMsg;
             });
-            addPomodoros(voiceChanel).then( () => {
-                console.log('pomodoro registrado em fb com sucesso')
-            });
+            voiceChanel.members.forEach(member => {
+                addPomodoro(member.id);
+            })
         },
         () => {
             playSound(voiceChanel, "valendo");
@@ -32,7 +35,6 @@ export const createDiscordPomodoro = ( textChanel: TextChannel ,voiceChanel: Voi
         },
         () => {
             textChanel.send('fim da pausa longa');
-            onEndLongRest();
         }
     )
 }
