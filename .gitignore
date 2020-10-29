@@ -1,4 +1,9 @@
 .env
 node_modules
 public
+<<<<<<< HEAD
 serviceAccountKey.json
+=======
+firebaseServiceAccount.json
+**/.js
+>>>>>>> refatorar-pomodoroMAchine

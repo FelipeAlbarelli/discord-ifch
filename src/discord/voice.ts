@@ -1,13 +1,29 @@
-import { Message } from "discord.js";
+import { Message, VoiceChannel } from "discord.js";
 
-export const playSound = async (message: Message , sound : 'valendo' | 'parou') => {
+type sound = 'valendo' | 'parou';
+
+const soundsLocations = {
+    'valendo' : 'audio/valendo.mp3',
+    'parou' : 'audio/parou.mp3'
+}
+
+// readFile(url , (err , data) => {
+//     if (err) return console.log(err)
+//     console.log(data.length)
+// })
+
+
+export const playSound = async (vc: VoiceChannel , sound : sound) => {
     try {
-        const connection = await message.member.voice.channel.join();
+        const connection = await vc.join();
         // console.log(connection);
-        const dispatcher = connection.play(`./audio/${sound}.mp3`, {
-            volume: .7
+        const dispatcher = connection?.play(
+            // ytdl('https://youtu.be/aJctI5q2UY0')
+            soundsLocations[sound]
+        , {
+            volume: 1
         });
-
+            
         dispatcher.on('start', () => {
             console.log('audio.mp3 is now playing!');
         });

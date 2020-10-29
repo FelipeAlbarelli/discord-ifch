@@ -4,5 +4,20 @@ configurações:
     ajustar tempos
     só admin pode mudar as configurações
     (alguns cargos podem?)
-mensagem help
+melhorar mensagem de teste
+melhorar estrutura de comandos
 painel admin em site
+criar bot para testes
+apagar msg de timer com comando cancel
+cancelar um pomdoro se terminar um e ninguem estiver na sala 
+criar versão de teste local com var
+  modo com/sem logs
+!usar nome padrão para sala de estudo (para não precisar ficar usando o canal de voz de quem mandou a msg)
+ao fim de intervalo longo perguntar se users desejam fazer mais um
+só marcar pomodoro para os users que estiverem em grande parte do pomodoro (atualmente marca para todos que estão no fim)
+add comando 'ver config'
+tocar musica do airton sena quando alguem bater um recorde de pomodoro
+
+coisas engraçadas:
+  comando 'bora cantina do belo'
+    leva todo mundo parao corredor, depois para a cantina do belo

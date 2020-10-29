@@ -1,9 +1,9 @@
-import config  from '../../config';
+import defaultConfig  from '../config';
 import {setTimeout as setTimeoutNode} from 'timers';
 
 const {
     intervalMs, longRestMin ,pomodorosUntilLongRest ,restMin ,workMin
-} = config.pomodoro
+} = defaultConfig.pomodoro
 
 export const secondsToTimerStr = (seconds : number) => {
     const minutes = Math.floor(seconds / 60);
@@ -16,9 +16,10 @@ export const secondsToTimerStr = (seconds : number) => {
 export class PomodoroMachine {
 
     c = 0;
-    interval: NodeJS.Timeout;
-    timeOut: NodeJS.Timeout;
-    pomodoring: boolean;
+    interval?: NodeJS.Timeout;
+    timeOut?: NodeJS.Timeout;
+    pomodoring?: boolean;
+    active = false;
 
     tick: Function;
     finishPomodoro: Function;
@@ -45,7 +46,7 @@ export class PomodoroMachine {
             this.tick(t * intervalMs);
         }, intervalMs);
         this.timeOut = setTimeoutNode(() => {
-            clearInterval(this.interval);
+            if (this.interval) clearInterval(this.interval);
             if (this.c === pomodorosUntilLongRest) {
                 this.c =0;
                 this.finishLongRest();
@@ -65,10 +66,11 @@ export class PomodoroMachine {
             this.tick(t * intervalMs)
         },
         intervalMs);
+        this.active = true;
 
         this.timeOut = setTimeoutNode(() => {
             this.c += 1;
-            clearInterval(this.interval);
+            if (this.interval) clearInterval(this.interval);
             this.finishPomodoro(this.c);
             if (this.c === pomodorosUntilLongRest) {
                 this.startRest(longRestMin * 60 * 1000)
@@ -79,13 +81,10 @@ export class PomodoroMachine {
     }
 
     cancelOne() {
-        clearInterval(this.interval);
-        clearInterval(this.timeOut);
+        if (this.interval) clearInterval(this.interval);
+        if (this.timeOut) clearInterval(this.timeOut);
         this.pomodoring = false;
-    }
-
-    reset() {
-
+        this.active = false;
     }
 
 
