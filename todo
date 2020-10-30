@@ -21,6 +21,10 @@ programar pomodoro (pomodoro em 3 min)
 !!!separar handleMsg entre msgs que precisam estar em canal de voz e que não precisam!!!
   isso já prepara para comandos no DM
 
+Erros:
+  mão manda msg inicial
+  não reseta contagem de pomodoros
+
 Comandos de DM:
   pomodoros do dia
   pomdoros da semana
@@ -35,7 +39,6 @@ Comandos de guilda:
     escrever _ para pular argumento
   ¬congig - configurações de pomodoro do servidor
     opção de registrar diferentes configurações por guilda e escolher uma para padrão 
-
 
 coisas engraçadas:
   comando 'bora cantina do belo'
