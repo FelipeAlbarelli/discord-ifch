@@ -19,6 +19,23 @@ add comando 'ver config'
 tocar musica do airton sena quando alguem bater um recorde de pomodoro
 programar pomodoro (pomodoro em 3 min)
 !!!separar handleMsg entre msgs que precisam estar em canal de voz e que não precisam!!!
+  isso já prepara para comandos no DM
+
+Comandos de DM:
+  pomodoros do dia
+  pomdoros da semana
+  quantos ciclos de pomodoro terminou
+
+Comandos de guilda:
+  status geral (todos os canais de voz do serivodr)
+  pausa - pausa pomodoro
+  esperar\continuar - não começa automáticamente o próximo pomodoro 
+  argumentos para pomodoro -> ¬start 25 5 15 4 V
+    tempoConc tempPausa pausaLong qntsPom começar-automáticamente-pomodoro?
+    escrever _ para pular argumento
+  ¬congig - configurações de pomodoro do servidor
+    opção de registrar diferentes configurações por guilda e escolher uma para padrão 
+
 
 coisas engraçadas:
   comando 'bora cantina do belo'
