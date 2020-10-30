@@ -37,6 +37,10 @@ const handleCommandTextChanel = (textC: TextChannel, voiceC: VoiceChannel, comma
             textC.send('pomodoro cancelado')
             break;
         case 'status':
+            if (guildsPomdoros[voiceId] == undefined){
+              textC.send("bot inativo");
+              return;
+            }
             textC.send(
               guildsPomdoros[voiceId].active ?
               (guildsPomdoros[voiceId].pomodoring ?
