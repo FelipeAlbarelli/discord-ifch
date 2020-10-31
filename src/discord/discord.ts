@@ -34,6 +34,7 @@ const handleCommandTextChanel = (textC: TextChannel, voiceC: VoiceChannel, comma
             break;
         case 'cancelar':
             guildsPomdoros[voiceId].cancelOne();
+            delete guildsPomdoros[voiceId];
             textC.send('pomodoro cancelado')
             break;
         case 'status':
