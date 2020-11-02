@@ -29,14 +29,35 @@ export const createUser = async (user : User) => {
 
 export const countUserPomdoros = async (
     discordUserId: string , 
-    when : 'always' | 'this_week' |'last_week' | 'this_month' | 'last_month'
+    when : 'always' | 'today' |'this_week' |'last_week' | 'this_month' | 'last_month'
 ): Promise<number> => {
     try {
         console.log(discordUserId);
         const userRef = await usersDb.where('discordId','==',discordUserId).limit(1).get();
         const userId = userRef.docs[0].id;
-        console.log(userId);
-        return (await usersDb.doc(userId).collection(names.pomodoros).get()).size;
+        let query = usersDb.doc(userId).collection(names.pomodoros);
+        let newQuery;
+        switch (when) {
+            case 'today':
+                const today = new Date();
+                today.setHours(0,0,0);
+                newQuery = query.where('date' , '>=' , firestore.Timestamp.fromDate(today) );
+                break;
+            case 'this_week':
+                const now = new Date();
+                const weekBegDay = now.getDate() - now.getDay();
+                const weekBeggDate = new Date (now.setDate(weekBegDay));
+                newQuery = query.where('date' , '>=' ,  firestore.Timestamp.fromDate(weekBeggDate));
+                break;
+            default:
+                break;
+        }
+
+        if (newQuery !== undefined) {
+            return (await newQuery.get()).size;
+
+        }
+        return (await query.get()).size;
     } catch (err) {
         herror(err);
         return null;

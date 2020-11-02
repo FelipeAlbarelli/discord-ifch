@@ -10,8 +10,15 @@ const {prefix} = defaultConfig;
 
 const guildsPomdoros: { [key: string]: PomodoroMachine;} = {}
 
-const handleDM = (message: Message, voiceChanel) => {
-    countUserPomdoros(message.author.id, 'always').then( r => {
+const handleDM = (message: Message, voiceChanel, command) => {
+
+    countUserPomdoros(message.author.id, 
+        command === 'today' ?
+        'today' :
+        (command === 'week' ?
+        'this_week' :
+        'always')
+        ).then( r => {
         message.reply(`pomodoros registrados : ${r}`)
     })
 }
@@ -74,17 +81,18 @@ export const handleMessage = (message: Message) => {
     const channel = message.channel;
     const voiceChanel = message.member?.voice.channel;
 
+    
+    if (!message.content.startsWith(prefix)) return;
+    
+    const _args = message.content.slice(prefix.length).trim().split(/ +/);
+    const command =  _args.length ? _args[0].toLowerCase() : null;
+
     if (channel instanceof DMChannel){
-        handleDM(message, voiceChanel);
+        handleDM(message, voiceChanel, command);
         return;
     } else if (channel instanceof NewsChannel) {
         return;
     } 
-
-    if (!message.content.startsWith(prefix)) return;
-
-    const _args = message.content.slice(prefix.length).trim().split(/ +/);
-    const command =  _args.length ? _args[0].toLowerCase() : null;
 
     const guildId = message.guild ? message.guild.id : null;
     if (guildId === null) return;

@@ -7,12 +7,8 @@ configurações:
 melhorar mensagem de teste
 melhorar estrutura de comandos
 painel admin em site
-criar bot para testes
 apagar msg de timer com comando cancel
 cancelar um pomdoro se terminar um e ninguem estiver na sala 
-criar versão de teste local com var
-  modo com/sem logs
-!usar nome padrão para sala de estudo (para não precisar ficar usando o canal de voz de quem mandou a msg)
 ao fim de intervalo longo perguntar se users desejam fazer mais um
 só marcar pomodoro para os users que estiverem em grande parte do pomodoro (atualmente marca para todos que estão no fim)
 add comando 'ver config'
@@ -21,9 +17,15 @@ programar pomodoro (pomodoro em 3 min)
 !!!separar handleMsg entre msgs que precisam estar em canal de voz e que não precisam!!!
   isso já prepara para comandos no DM
 
+Refatorar:
+  substituir factory por outro objeto que encapsula coleção de objs,
+  deixando o handleMsg apenas para chamar os métodos desse objeto
+
+
 Erros:
   mão manda msg inicial
-  não reseta contagem de pomodoros
+    muito provavelmente é pq quando se completa um ciclo de 4 pomodoros, o guilds[key] não é apagado,
+    o que faz com que não seja criado um obj novo, que é o que causa a msg inicial 
 
 Comandos de DM:
   pomodoros do dia
