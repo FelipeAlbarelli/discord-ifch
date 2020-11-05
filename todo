@@ -2,6 +2,7 @@ pomodoro
 configurações:
     trocar som pomodoro
     ajustar tempos
+    !mutar ou não pomodoro!
     só admin pode mudar as configurações
     (alguns cargos podem?)
 melhorar mensagem de teste
@@ -22,7 +23,7 @@ Features:
     Ex: fez a meta de pomodoros 30 dias seguidos
     fez 100 pomodoros juntos com amigos
     fez 20 ciclos de pomodoros com amigos
-    
+
 
 Refatorar:
   substituir factory por outro objeto que encapsula coleção de objs,
