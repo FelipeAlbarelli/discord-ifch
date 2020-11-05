@@ -17,6 +17,13 @@ programar pomodoro (pomodoro em 3 min)
 !!!separar handleMsg entre msgs que precisam estar em canal de voz e que não precisam!!!
   isso já prepara para comandos no DM
 
+Features:
+  achivments
+    Ex: fez a meta de pomodoros 30 dias seguidos
+    fez 100 pomodoros juntos com amigos
+    fez 20 ciclos de pomodoros com amigos
+    
+
 Refatorar:
   substituir factory por outro objeto que encapsula coleção de objs,
   deixando o handleMsg apenas para chamar os métodos desse objeto
