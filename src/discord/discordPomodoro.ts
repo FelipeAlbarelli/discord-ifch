@@ -34,6 +34,7 @@ export const createDiscordPomodoro = (
             })
         },
         () => {
+            playSound(voiceChanel , 'parou');
             textChanel.send('fim da pausa longa');
         }
     )

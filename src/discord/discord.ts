@@ -28,6 +28,8 @@ const handleCommandTextChanel = (textC: TextChannel, voiceC: VoiceChannel, comma
     const voiceId = voiceC.id;
 
     switch (command) {
+        case 'começar':
+        case 'valendo':
         case 'start':
             if (guildsPomdoros[voiceId] === undefined) {
                 guildsPomdoros[voiceId] = createDiscordPomodoro(textC, voiceC);
@@ -39,6 +41,7 @@ const handleCommandTextChanel = (textC: TextChannel, voiceC: VoiceChannel, comma
             }
             guildsPomdoros[voiceId].start();
             break;
+        case 'stop':
         case 'cancelar':
             guildsPomdoros[voiceId].cancelOne();
             delete guildsPomdoros[voiceId];
@@ -60,6 +63,7 @@ const handleCommandTextChanel = (textC: TextChannel, voiceC: VoiceChannel, comma
         case 'test-sound':
             playSound(voiceC, "valendo");
             break;
+        case 'ajuda':
         case 'help':
           textC.send(
             `lista de comandos:\n`+
