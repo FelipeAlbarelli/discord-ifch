@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev1": "tsc -w",
     "dev:prod": "nodemon public/index.js",
-    "dev2": "set NODE_ENV=local&& nodemon public/index.js",
+    "dev2": "NODE_ENV=local nodemon public/index.js",
     "start": "tsc && node public/index.js"
   },
   "repository": {
@@ -27,6 +27,9 @@
     "dotenv": "^8.2.0",
     "ffmpeg-static": "^4.2.7",
     "firebase-admin": "^9.3.0",
+    "nodemon": "^2.0.7",
+    "timer-node": "^5.0.2",
+    "tiny-timer": "^1.6.0",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.5"
   }

@@ -1,9 +1,9 @@
 import defaultConfig  from '../config';
-import {setTimeout as setTimeoutNode} from 'timers';
 
 const {
     intervalMs, longRestMin ,pomodorosUntilLongRest ,restMin ,workMin
 } = defaultConfig.pomodoro
+import Timer from 'tiny-timer';
 
 export const secondsToTimerStr = (seconds : number) => {
     const minutes = Math.floor(seconds / 60);
@@ -15,77 +15,45 @@ export const secondsToTimerStr = (seconds : number) => {
 
 export class PomodoroMachine {
 
-    c = 0;
-    interval?: NodeJS.Timeout;
-    timeOut?: NodeJS.Timeout;
-    pomodoring?: boolean;
-    active = false;
-
-    tick: Function;
-    finishPomodoro: Function;
-    finishRest: Function;
-    finishLongRest: Function;
+    tickTimer : Timer;
 
     constructor(
-        tick: Function, 
-        finishPomodoro: Function,
-        finishRest: Function,
-        finishCicle: Function) {
-            this.tick = tick;
-            this.finishPomodoro = finishPomodoro;
-            this.finishRest = finishRest;
-            this.finishLongRest = finishCicle;
-            console.log('constructing pomdoro machine')
+        private onShortRestStart?: (pomdorosDone: number) => void,
+        private onConcentrationStart?: (pomdorosDone: number) => void,
+        private onLongRestStart?: () => void,
+        private onPomodoroCicleEnd?: () => void,
+        private onTick?: (minutes: number, pomodoring: boolean, pomodorosDone: number) => void,
+        private options? : {
+            shortRestTime: number,
+            longRestTime: number,
+            totalPomodoros: number,
+            concentrationTime: number,
+        }
+    ) {
+        this.tickTimer = new Timer({
+            interval: .5 * 1000,
+            stopwatch: false
+        });
+        this.tickTimer.on('tick' , (ms) => {
+            console.log(ms);
+        })
     }
 
-    startRest(ms = restMin * 60 * 1000) {
-        let t = 0;
-        this.pomodoring = false;
-        this.interval = setInterval(() => {
-            t += 1;
-            this.tick(t * intervalMs);
-        }, intervalMs);
-        this.timeOut = setTimeoutNode(() => {
-            if (this.interval) clearInterval(this.interval);
-            if (this.c === pomodorosUntilLongRest) {
-                this.c =0;
-                this.finishLongRest();
-            } else {
-                this.finishRest()
-                this.start();
-            }
-        }, ms)
+    start = () => {
+        console.log('start pomodoro')
+        this.tickTimer.start(25000 , 1000);
     }
 
-    start( ms = workMin * 60 * 1000  ) {
-        console.log('start pomodoro' , ms)
-        let t = 0;
-        this.pomodoring = true;
-        this.interval = setInterval(() => {
-            t += 1;
-            this.tick(t * intervalMs)
-        },
-        intervalMs);
-        this.active = true;
-
-        this.timeOut = setTimeoutNode(() => {
-            this.c += 1;
-            if (this.interval) clearInterval(this.interval);
-            this.finishPomodoro(this.c);
-            if (this.c === pomodorosUntilLongRest) {
-                this.startRest(longRestMin * 60 * 1000)
-            } else {
-                this.startRest()
-            }
-        }, ms)
+    pause = () => {
+        this.tickTimer.pause();
     }
 
-    cancelOne() {
-        if (this.interval) clearInterval(this.interval);
-        if (this.timeOut) clearInterval(this.timeOut);
-        this.pomodoring = false;
-        this.active = false;
+    resume = () => {
+        this.tickTimer.resume();
     }
 
+    status = () => {
+        console.log(this.tickTimer.status , this.tickTimer.duration);
+    }
 
 }
