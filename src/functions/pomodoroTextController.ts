@@ -6,17 +6,19 @@ import Timer from 'timer.js'
 
 export class PomodoroTextController {
 
-    concentrationTime = 25;
-    shortRest = 5;
-    longRest = 15;
+    concentrationTime = 25 * 60;
+    shortRest = 5 * 60;
+    longRest = 15 * 60;
     totalCicles = 4;
+    tickTime = 5;
 
     private guildsPomdoros : {
         [key: string] : {
             timer : Timer,
-            status : "pomdoro-on" | "short-rest" | "long-rest" | "inactive",
+            status : "pomdoro-on" | "short-rest" | "long-rest" | "inactive" | "pause",
             pomodorosDone: number,
-            timerMessage: Message
+            timerMessage: Message,
+            totalTicks: number,
         },
     } = {};
 
@@ -32,10 +34,11 @@ export class PomodoroTextController {
         try {
             const key = this.getKey(textChanel , voiceChanel);
             this.guildsPomdoros[key] = {
-                timer : new Timer({tick: 30}),
+                timer : new Timer({tick: this.tickTime}),
                 status : 'inactive',
                 pomodorosDone: 0,
-                timerMessage : null
+                timerMessage : null,
+                totalTicks: 0
             }
         } catch (err) {
             console.log(err)
@@ -49,7 +52,7 @@ export class PomodoroTextController {
         }
         const guild = this.guildsPomdoros[key];
 
-        if ( guild.status == 'pomdoro-on') {
+        if ( guild.status == 'pomdoro-on' || guild.status == 'pause') {
             return; // já esta havendo pomodoro
         }
         guild.pomodorosDone += 1;
@@ -59,10 +62,26 @@ export class PomodoroTextController {
         guild.timer.on('onend' , () => {
             textChanel.send(`fim do pomodoro #${guild.pomodorosDone}`);
         } )
-        guild.timer.on('ontick' , (ms : number) => {
-            guild.timerMessage.edit(secondsToTimerStr(ms * 1000)).then(() => {})
+        guild.timer.on('ontick' , () => {
+            guild.totalTicks += 1;
+            guild.timerMessage.edit(secondsToTimerStr(guild.totalTicks * this.tickTime)).then(() => {})
         })
-        guild.timer.start(5)
+        guild.timer.start(this.concentrationTime)
+    }
+
+    pause(textChanel: TextChannel, voiceChanel: VoiceChannel){
+        const key = this.getKey(textChanel , voiceChanel);
+        const guild = this.guildsPomdoros[key];
+        const status = guild.status;
+        if ( status !== 'pomdoro-on') {
+            return;
+        }
+        guild.status = 'pause';
+        guild.timer.pause();
+    }
+
+    startRest = async ( textChanel: TextChannel, voiceChanel: VoiceChannel , type : 'short' | 'long' ) => {
+
     }
 
 
