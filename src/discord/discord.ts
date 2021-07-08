@@ -1,14 +1,15 @@
-import {  DMChannel, Message, NewsChannel, TextChannel, VoiceChannel  } from 'discord.js';
+import {  Client, DMChannel, Message, NewsChannel, TextChannel, VoiceChannel  } from 'discord.js';
 import defaultConfig  from '../config'
 import { addPomodoro, countUserPomdoros } from '../db/pomodoros';
-import { secondsToTimerStr , PomodoroMachine } from '../functions/pomodoro';
+import { secondsToTimerStr , PomodoroMachine } from '../functions/pomodoroMachine';
+import {PomodoroTextController} from '../functions/pomodoroTextController';
 // import { createDiscordPomodoro } from './discordPomodoro';
 import { playSound } from './voice';
 
 
 const {prefix} = defaultConfig;
 
-const guildsPomdoros: { [key: string]: PomodoroMachine;} = {}
+const pomodoroCtrl = new PomodoroTextController();
 
 const handleDM = (message: Message, voiceChanel, command) => {
 
@@ -78,17 +79,23 @@ const handleDM = (message: Message, voiceChanel, command) => {
 //     }
 // }
 
-export const handleMessage = (message: Message) => {
-
-    if (message.author.bot) return;
-    if (!message.content.startsWith(prefix)) return;
-    
-    const channel = message.channel;
-    const voiceChanel = message.member?.voice.channel;
-
+const getInfoFromComment = (message: Message) => {
     const args = message.content.slice(prefix.length).trim().split(/ +/);
-    const command =  args.length ? args[0].toLowerCase() : null;
+    return  {
+        channel: message.channel,
+        voiceChanel : message.member?.voice.channel,
+        args,
+        command: args.length ? args[0].toLowerCase() : null
+    }
+}
 
+export const handleMessage = (message: Message , client: Client) => {
+
+    if (message.author.bot) {
+        return;
+    }
+
+    const { channel , args , command , voiceChanel } = getInfoFromComment(message);
 
     if (channel instanceof DMChannel){
         handleDM(message, voiceChanel, command);
@@ -96,11 +103,11 @@ export const handleMessage = (message: Message) => {
     } else if (channel instanceof NewsChannel) {
         return;
     } else {
-        if (voiceChanel === null) {
-            message.reply('junte-se a um canal de voz para usar os comandos do bot');
-            return;
-        }
-        handleTextChanelMsg(channel , voiceChanel,  command , args.slice(1))
+        // if (voiceChanel === null) {
+        //     message.reply('junte-se a um canal de voz para usar os comandos do bot');
+        //     return;
+        // }
+        handleTextChanelMsg(channel , voiceChanel,  command , args.slice(1) , client)
         .then(() => {})
         .catch(() => {});
     }
@@ -113,26 +120,25 @@ export const handleMessage = (message: Message) => {
 
 } 
 
-const handleTextChanelMsg = async (textChanel: TextChannel, voiceChanel: VoiceChannel ,command: string , args: string[]) => {
+const handleTextChanelMsg = async (textChanel: TextChannel, voiceChanel: VoiceChannel ,command: string , args: string[] , client: Client) => {
+
+    console.log( '123')
     
     switch (command) {
         case 'start':
         case 'comecar':
         case 'valendo':
         case 'bora':
-            console.log(command);
-            guildsPomdoros[voiceChanel.id] = new PomodoroMachine();
-            guildsPomdoros[voiceChanel.id].start();
-            await textChanel.send(args.join(' '));
+            pomodoroCtrl.startPomodoro(textChanel , voiceChanel);
             break;
         case 'pausa':
         case 'pause':
-            guildsPomdoros[voiceChanel.id]?.pause();
+            // guildsPomdoros[voiceChanel.id]?.pause();
             break;
         case 'resume':
         case 'volta':
         case 'voltar':
-            guildsPomdoros[voiceChanel.id].resume();
+            // guildsPomdoros[voiceChanel.id].resume();
             break;
         case 'cancelar':
         case 'stop':
@@ -141,7 +147,7 @@ const handleTextChanelMsg = async (textChanel: TextChannel, voiceChanel: VoiceCh
         case 'status':
         case 'config':
         case 'configuracao':
-            guildsPomdoros[voiceChanel.id]?.status();
+            // guildsPomdoros[voiceChanel.id]?.status();
             break;
         default:
             await textChanel.send('Comando desconhecido');

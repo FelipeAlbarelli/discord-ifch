@@ -18,11 +18,11 @@ export class PomodoroMachine {
     tickTimer : Timer;
 
     constructor(
-        private onShortRestStart?: (pomdorosDone: number) => void,
-        private onConcentrationStart?: (pomdorosDone: number) => void,
-        private onLongRestStart?: () => void,
-        private onPomodoroCicleEnd?: () => void,
-        private onTick?: (minutes: number, pomodoring: boolean, pomodorosDone: number) => void,
+        private functions : {onShortRestStart?: (pomdorosDone: number) => void,
+         onConcentrationStart?: (pomdorosDone: number) => void;
+         onLongRestStart?: () => void;
+         onPomodoroCicleEnd?: () => void;
+         onTick?: (minutes: number, pomodoring: boolean, pomodorosDone: number) => void},
         private options? : {
             shortRestTime: number,
             longRestTime: number,
