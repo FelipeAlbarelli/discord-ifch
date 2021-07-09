@@ -7,12 +7,12 @@ type Status = "pomdoro-on" | "short-rest" | "long-rest" | "inactive" | "pause";
 
 export class PomodoroTextController {
 
-    concentrationTime = .1 * 60;
-    shortRest = .2 * 60;
-    longRest = .1 * 60;
-    sleepTime = .5 * 60;
-    totalCicles = 2;
-    tickTime = 2;
+    concentrationTime = 25 * 60;
+    shortRest = 5 * 60;
+    longRest = 15 * 60;
+    sleepTime = 5 * 60;
+    totalCicles = 4;
+    tickTime = 30;
 
     private guildsPomdoros : {
         [key: string] : {

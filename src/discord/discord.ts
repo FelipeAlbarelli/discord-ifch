@@ -85,7 +85,8 @@ const getInfoFromComment = (message: Message) => {
         channel: message.channel,
         voiceChanel : message.member?.voice.channel,
         args,
-        command: args.length ? args[0].toLowerCase() : null
+        command: args.length ? args[0].toLowerCase() : null,
+        isCommandToBot: message.content[0] == prefix
     }
 }
 
@@ -95,7 +96,9 @@ export const handleMessage = (message: Message , client: Client) => {
         return;
     }
 
-    const { channel , args , command , voiceChanel } = getInfoFromComment(message);
+    const { channel , args , command , voiceChanel ,isCommandToBot } = getInfoFromComment(message);
+
+    console.log(isCommandToBot)
 
     if (channel instanceof DMChannel){
         handleDM(message, voiceChanel, command);
@@ -103,10 +106,13 @@ export const handleMessage = (message: Message , client: Client) => {
     } else if (channel instanceof NewsChannel) {
         return;
     } else {
-        // if (voiceChanel === null) {
-        //     message.reply('junte-se a um canal de voz para usar os comandos do bot');
-        //     return;
-        // }
+        if (!isCommandToBot) {
+            return;
+        }
+        if (voiceChanel === null) {
+            message.reply('junte-se a um canal de voz para usar os comandos do bot');
+            return;
+        }
         handleTextChanelMsg(channel , voiceChanel,  command , args.slice(1) , client)
         .then(() => {})
         .catch(() => {});
@@ -120,45 +126,38 @@ export const handleMessage = (message: Message , client: Client) => {
 
 } 
 
-const handleTextChanelMsg = async (textChanel: TextChannel, voiceChanel: VoiceChannel ,command: string , args: string[] , client: Client) => {
+const commandsArrayToText = (x : string[]) => x.map(s => `''\\${prefix}${s}''` ).join(", ")
 
-    console.log( '123')
+const helpText = () => {
+    return `Começar um pomodoro: ${commandsArrayToText(textCommands.start)} 
+Pausar um pomodoro: ${commandsArrayToText(textCommands.pause)}
+Retomar um pomodoro: ${commandsArrayToText(textCommands.resume)} 
+Cancelar ciclo: ${commandsArrayToText(textCommands.cancel)}
+Modo soneca (5 min extra de pausa): ${commandsArrayToText(textCommands.sleep)} `
+}
+
+const textCommands = {
+    start: ['start' , 'comecar' , 'começar' , 'valendo' , 'bora'],
+    pause: ['pausa' , 'pause'],
+    resume: ['resume' , 'retomar' , 'volta' , 'voltar'],
+    cancel: ['cancel' , 'cancelar' , 'stop'],
+    sleep: ['sleep' , 'soneca']
+};
+
+const handleTextChanelMsg = async (textChanel: TextChannel, voiceChanel: VoiceChannel ,command: string , args: string[] , client: Client) => {
     
-    switch (command) {
-        case 'start':
-        case 'comecar':
-        case 'valendo':
-        case 'bora':
-            await pomodoroCtrl.startPomodoro(textChanel , voiceChanel);
-            break;
-        case 'pausa':
-        case 'pause':
-            // guildsPomdoros[voiceChanel.id]?.pause();
-            pomodoroCtrl.pause(textChanel , voiceChanel)
-            break;
-        case 'resume':
-        case 'volta':
-        case 'voltar':
-            // guildsPomdoros[voiceChanel.id].resume();
-            pomodoroCtrl.resume(textChanel , voiceChanel);
-            break;
-        case 'cancelar':
-        case 'stop':
-        case 'cancel':
-            pomodoroCtrl.cancel(textChanel , voiceChanel);
-            break;
-        case 'soneca':
-        case 'sleep':
-            pomodoroCtrl.soneca(textChanel , voiceChanel);
-            break;
-        // case 'status':
-        // case 'config':
-        // case 'configuracao':
-        //     // guildsPomdoros[voiceChanel.id]?.status();
-        //     break;
-        default:
-            await textChanel.send('Comando desconhecido');
-            break
+    if (textCommands.start.includes(command)) {
+        await pomodoroCtrl.startPomodoro(textChanel , voiceChanel);
+    } else if (textCommands.pause.includes(command)) {
+        pomodoroCtrl.pause(textChanel , voiceChanel)
+    } else if (textCommands.resume.includes(command)) {
+        pomodoroCtrl.resume(textChanel , voiceChanel);
+    } else if (textCommands.cancel.includes(command)) {
+        pomodoroCtrl.cancel(textChanel , voiceChanel);
+    } else if (textCommands.sleep.includes(command)) {
+        pomodoroCtrl.soneca(textChanel , voiceChanel);
+    } else {
+        textChanel.send(helpText());
     }
 
 }
