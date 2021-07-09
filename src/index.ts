@@ -6,6 +6,10 @@ const {botToken} = config;
 
 const discordClient = new Client();
 
+console.log({botToken});
+
+console.log(process.env.NODE_ENV);
+
 discordClient.login(botToken)
 .then(() => {
 	console.log('Discord bot connected :D', discordClient.user.username)
@@ -15,13 +19,6 @@ discordClient.login(botToken)
 	console.error(err);
 });
 
-var http = require('http');
-
-http.createServer(function (req, res) {
-	res.write("I'm alive");
-	res.end();
-}).listen(8080);
-
 discordClient.on('message', message => {
-    handleMessage(message);
+    handleMessage(message , discordClient);
 });

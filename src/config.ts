@@ -1,5 +1,4 @@
 const local = process.env.NODE_ENV === 'local';
-
 if (local) {
 	console.log('local')
 	require('dotenv').config()

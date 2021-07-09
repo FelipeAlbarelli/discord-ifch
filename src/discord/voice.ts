@@ -13,7 +13,7 @@ const soundsLocations = {
 // })
 
 
-export const playSound = async (vc: VoiceChannel , sound : sound) => {
+export const playSoundDiscord = async (vc: VoiceChannel , sound : sound) => {
     try {
         const connection = await vc.join();
         // console.log(connection);
