@@ -1,7 +1,7 @@
-import { Message, TextChannel, VoiceChannel } from "discord.js";
-import { addPomodoro } from "../db/pomodoros";
-import { PomodoroMachine, secondsToTimerStr } from "../functions/pomodoro";
-import { playSound } from "./voice";
+// import { Message, TextChannel, VoiceChannel } from "discord.js";
+// import { addPomodoro } from "../db/pomodoros";
+// import { PomodoroMachine, secondsToTimerStr } from "../functions/pomodoro";
+// import { playSoundDiscord } from "./voice";
 
 // export const createDiscordPomodoro = ( 
 //     textChanel: TextChannel ,

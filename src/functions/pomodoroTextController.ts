@@ -1,15 +1,16 @@
 import { Message, TextChannel, VoiceChannel } from "discord.js";
 import {PomodoroMachine, secondsToTimerStr} from './pomodoroMachine';
 import Timer from 'timer.js'
+import { playSoundDiscord } from "../discord/voice";
 
 
 
 export class PomodoroTextController {
 
     concentrationTime = .5 * 60;
-    shortRest = .3 * 60;
-    longRest = 15 * 60;
-    totalCicles = 4;
+    shortRest = .5 * 60;
+    longRest = .5 * 60;
+    totalCicles = 2;
     tickTime = 2;
 
     private guildsPomdoros : {
@@ -67,6 +68,7 @@ export class PomodoroTextController {
         guild.pomodorosBeggined += 1;
         guild.status = 'pomdoro-on';
         textChanel.send(`Começo do pomodoro #${guild.pomodorosBeggined}`);
+        playSoundDiscord(voiceChanel , 'valendo');
         guild.timerMessage = await textChanel.send(secondsToTimerStr(0));
         guild.timer.on('onend' , () => {
             textChanel.send(`fim do pomodoro #${guild.pomodorosBeggined}`);
@@ -126,6 +128,14 @@ export class PomodoroTextController {
         // console.log(this.guildsPomdoros)
     }
 
+    private onEndShortRest(textChanel: TextChannel, voiceChanel: VoiceChannel) {
+        return;
+    }
+
+    private onEndLongRest(textChanel: TextChannel, voiceChanel: VoiceChannel) {
+
+    }
+
     private startRest = async ( textChanel: TextChannel, voiceChanel: VoiceChannel , type : 'short' | 'long' ) => {
         const restTypeString = type == 'short' ? 'curta' : 'longa';
         const key = this.getKey(textChanel , voiceChanel);
@@ -133,13 +143,15 @@ export class PomodoroTextController {
         this.resetTimer(textChanel , voiceChanel);
         guild.status = type == 'short' ? 'short-rest' : 'long-rest';
         textChanel.send(`Pausa ${restTypeString} ${guild.pomodorosBeggined}`);
+        playSoundDiscord(voiceChanel , 'parou');
         guild.timerMessage = await textChanel.send(secondsToTimerStr(0));
         guild.timer.on('onend' , () => {
             textChanel.send(`fim da pausa ${restTypeString} #${guild.pomodorosBeggined}`);
             if (type === 'short') {
                 this.startPomodoro(textChanel , voiceChanel);
+                this.onEndShortRest(textChanel , voiceChanel);
             } else {
-                
+                this.onEndLongRest(textChanel , voiceChanel);
             }
         })
         guild.timer.on('ontick' , () => {

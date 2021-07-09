@@ -4,7 +4,7 @@ import { addPomodoro, countUserPomdoros } from '../db/pomodoros';
 import { secondsToTimerStr , PomodoroMachine } from '../functions/pomodoroMachine';
 import {PomodoroTextController} from '../functions/pomodoroTextController';
 // import { createDiscordPomodoro } from './discordPomodoro';
-import { playSound } from './voice';
+import { playSoundDiscord } from './voice';
 
 
 const {prefix} = defaultConfig;
