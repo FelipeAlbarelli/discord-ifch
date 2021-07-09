@@ -6,11 +6,11 @@ import Timer from 'timer.js'
 
 export class PomodoroTextController {
 
-    concentrationTime = 25 * 60;
-    shortRest = 5 * 60;
+    concentrationTime = .5 * 60;
+    shortRest = .3 * 60;
     longRest = 15 * 60;
     totalCicles = 4;
-    tickTime = 5;
+    tickTime = 2;
 
     private guildsPomdoros : {
         [key: string] : {
@@ -45,6 +45,13 @@ export class PomodoroTextController {
         }
     }
 
+    private resetTimer = (textChanel: TextChannel, voiceChanel: VoiceChannel) => {
+        const key = this.getKey(textChanel , voiceChanel);
+        const guild = this.guildsPomdoros[key];
+        guild.timer = new Timer({tick: this.tickTime});
+        guild.totalTicks = 0;
+    }
+
     startPomodoro = async (textChanel: TextChannel, voiceChanel: VoiceChannel) => {
         const key = this.getKey(textChanel , voiceChanel);
         if (! this.guildsPomdoros[key] ) {
@@ -55,12 +62,19 @@ export class PomodoroTextController {
         if ( guild.status == 'pomdoro-on' || guild.status == 'pause') {
             return; // já esta havendo pomodoro
         }
+        this.resetTimer(textChanel , voiceChanel);
+
         guild.pomodorosBeggined += 1;
         guild.status = 'pomdoro-on';
         textChanel.send(`Começo do pomodoro #${guild.pomodorosBeggined}`);
         guild.timerMessage = await textChanel.send(secondsToTimerStr(0));
         guild.timer.on('onend' , () => {
             textChanel.send(`fim do pomodoro #${guild.pomodorosBeggined}`);
+            this.startRest(textChanel , voiceChanel , guild.pomodorosBeggined == this.totalCicles ? 'long' : 'short' ).then( () => {
+
+            } ).catch(err => {
+
+            })
         } )
         guild.timer.on('ontick' , () => {
             guild.totalTicks += 1;
@@ -95,7 +109,6 @@ export class PomodoroTextController {
     }
 
     soneca(textChanel: TextChannel, voiceChanel: VoiceChannel) {
-
     }
 
     cancel(textChanel: TextChannel, voiceChanel: VoiceChannel) {
@@ -113,8 +126,27 @@ export class PomodoroTextController {
         // console.log(this.guildsPomdoros)
     }
 
-    startRest = async ( textChanel: TextChannel, voiceChanel: VoiceChannel , type : 'short' | 'long' ) => {
-
+    private startRest = async ( textChanel: TextChannel, voiceChanel: VoiceChannel , type : 'short' | 'long' ) => {
+        const restTypeString = type == 'short' ? 'curta' : 'longa';
+        const key = this.getKey(textChanel , voiceChanel);
+        const guild = this.guildsPomdoros[key]; 
+        this.resetTimer(textChanel , voiceChanel);
+        guild.status = type == 'short' ? 'short-rest' : 'long-rest';
+        textChanel.send(`Pausa ${restTypeString} ${guild.pomodorosBeggined}`);
+        guild.timerMessage = await textChanel.send(secondsToTimerStr(0));
+        guild.timer.on('onend' , () => {
+            textChanel.send(`fim da pausa ${restTypeString} #${guild.pomodorosBeggined}`);
+            if (type === 'short') {
+                this.startPomodoro(textChanel , voiceChanel);
+            } else {
+                
+            }
+        })
+        guild.timer.on('ontick' , () => {
+            guild.totalTicks += 1;
+            guild.timerMessage.edit(secondsToTimerStr(guild.totalTicks * this.tickTime)).then(() => {})
+        })
+        guild.timer.start(type == 'short' ? this.shortRest : this.longRest);
     }
 
 

@@ -1,2 +1,4 @@
 fazer bot criar canal de texto próprio para mensagens
 achar uma solução mais elegante do que passar sempre os textChanel: TextChannel, voiceChanel: VoiceChannel
+comando para começar em certo horário (limitar para no máximo 2h no futuro ?)
+    ex: "começar pomodoro em 25min"
