@@ -1,1 +1,2 @@
 fazer bot criar canal de texto próprio para mensagens
+achar uma solução mais elegante do que passar sempre os textChanel: TextChannel, voiceChanel: VoiceChannel

@@ -129,19 +129,23 @@ const handleTextChanelMsg = async (textChanel: TextChannel, voiceChanel: VoiceCh
         case 'comecar':
         case 'valendo':
         case 'bora':
-            pomodoroCtrl.startPomodoro(textChanel , voiceChanel);
+            await pomodoroCtrl.startPomodoro(textChanel , voiceChanel);
             break;
         case 'pausa':
         case 'pause':
             // guildsPomdoros[voiceChanel.id]?.pause();
+            pomodoroCtrl.pause(textChanel , voiceChanel)
             break;
         case 'resume':
         case 'volta':
         case 'voltar':
             // guildsPomdoros[voiceChanel.id].resume();
+            pomodoroCtrl.resume(textChanel , voiceChanel);
             break;
         case 'cancelar':
         case 'stop':
+        case 'cancel':
+            pomodoroCtrl.cancel(textChanel , voiceChanel);
             break;
         
         case 'status':
