@@ -147,12 +147,15 @@ const handleTextChanelMsg = async (textChanel: TextChannel, voiceChanel: VoiceCh
         case 'cancel':
             pomodoroCtrl.cancel(textChanel , voiceChanel);
             break;
-        
-        case 'status':
-        case 'config':
-        case 'configuracao':
-            // guildsPomdoros[voiceChanel.id]?.status();
+        case 'soneca':
+        case 'sleep':
+            pomodoroCtrl.soneca(textChanel , voiceChanel);
             break;
+        // case 'status':
+        // case 'config':
+        // case 'configuracao':
+        //     // guildsPomdoros[voiceChanel.id]?.status();
+        //     break;
         default:
             await textChanel.send('Comando desconhecido');
             break

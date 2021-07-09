@@ -3,20 +3,21 @@ import {PomodoroMachine, secondsToTimerStr} from './pomodoroMachine';
 import Timer from 'timer.js'
 import { playSoundDiscord } from "../discord/voice";
 
-
+type Status = "pomdoro-on" | "short-rest" | "long-rest" | "inactive" | "pause";
 
 export class PomodoroTextController {
 
-    concentrationTime = .5 * 60;
-    shortRest = .5 * 60;
-    longRest = .5 * 60;
+    concentrationTime = .1 * 60;
+    shortRest = .2 * 60;
+    longRest = .1 * 60;
+    sleepTime = .5 * 60;
     totalCicles = 2;
     tickTime = 2;
 
     private guildsPomdoros : {
         [key: string] : {
             timer : Timer,
-            status : "pomdoro-on" | "short-rest" | "long-rest" | "inactive" | "pause",
+            status : Status,
             pomodorosBeggined: number,
             timerMessage: Message,
             totalTicks: number,
@@ -111,6 +112,22 @@ export class PomodoroTextController {
     }
 
     soneca(textChanel: TextChannel, voiceChanel: VoiceChannel) {
+        const key = this.getKey(textChanel , voiceChanel);
+        if (!this.guildsPomdoros[key]) {
+            return;
+        }
+        const guild = this.guildsPomdoros[key];
+        const statusAccept: Status[] = ['short-rest' , 'long-rest'];
+        if (!statusAccept.includes(guild.status)) {
+            return;
+        }
+        const remainDuration: number = (guild.timer.getDuration());
+        guild.timer.stop();
+        console.log(remainDuration , remainDuration / 1000 + this.sleepTime);
+        
+        guild.timer.start(remainDuration / 1000 + this.sleepTime);
+        
+
     }
 
     cancel(textChanel: TextChannel, voiceChanel: VoiceChannel) {
@@ -159,6 +176,7 @@ export class PomodoroTextController {
             guild.timerMessage.edit(secondsToTimerStr(guild.totalTicks * this.tickTime)).then(() => {})
         })
         guild.timer.start(type == 'short' ? this.shortRest : this.longRest);
+        
     }
 
 
