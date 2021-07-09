@@ -150,7 +150,11 @@ export class PomodoroTextController {
     }
 
     private onEndLongRest(textChanel: TextChannel, voiceChanel: VoiceChannel) {
-
+        const key = this.getKey(textChanel , voiceChanel);
+        const guild = this.guildsPomdoros[key]; 
+        guild.pomodorosBeggined = 0;
+        guild.status ='inactive';
+        guild.totalTicks = 0;
     }
 
     private startRest = async ( textChanel: TextChannel, voiceChanel: VoiceChannel , type : 'short' | 'long' ) => {
