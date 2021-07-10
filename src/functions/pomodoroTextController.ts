@@ -73,6 +73,7 @@ export class PomodoroTextController {
         guild.timerMessage = await textChanel.send(secondsToTimerStr(0));
         guild.timer.on('onend' , () => {
             textChanel.send(`fim do pomodoro #${guild.pomodorosBeggined}`);
+            guild.timerMessage.delete();
             this.startRest(textChanel , voiceChanel , guild.pomodorosBeggined == this.totalCicles ? 'long' : 'short' ).then( () => {
 
             } ).catch(err => {
@@ -167,6 +168,7 @@ export class PomodoroTextController {
         playSoundDiscord(voiceChanel , 'parou');
         guild.timerMessage = await textChanel.send(secondsToTimerStr(0));
         guild.timer.on('onend' , () => {
+            guild.timerMessage.delete();
             textChanel.send(`fim da pausa ${restTypeString} #${guild.pomodorosBeggined}`);
             if (type === 'short') {
                 this.startPomodoro(textChanel , voiceChanel);

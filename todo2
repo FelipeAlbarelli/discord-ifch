@@ -2,3 +2,26 @@ fazer bot criar canal de texto próprio para mensagens
 achar uma solução mais elegante do que passar sempre os textChanel: TextChannel, voiceChanel: VoiceChannel
 comando para começar em certo horário (limitar para no máximo 2h no futuro ?)
     ex: "começar pomodoro em 25min"
+pomodoros com parametros
+todo list para pomodoro
+colocar na fila proximo ciclo de pomodoros
+controlar pomodoros por reações (pausa , cancelar , soneca)
+    tbm apagar mensagem de timer quando este acabar, para ficar com menos poluição
+comando de configuração (por enquanto não salva configuração da sala, mas deve ser fácil implementar)
+    gera lista de opções que vc escolhe reagindo
+    logo depois apaga a mensagem para evitar erros
+comando de listar configurações
+comando de resetar configuração
+deletar 
+
+//// Gacha
+tentar usar probabilidades do genshim impact
+determinar quanto de $$$ é ganho
+determinar itens ruins que podem ser ganhos
+    café ( solúvel, expresso , máquina italiana , máquina do cle , coado do ifch)
+    cigarro
+    copo do ademir
+    bisnaguinha (integral ou normal)
+    cachecol
+    livros
+escolher quais itens são 4* e quais são 5*

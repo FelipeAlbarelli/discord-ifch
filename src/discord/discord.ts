@@ -1,7 +1,6 @@
 import {  Client, DMChannel, Message, NewsChannel, TextChannel, VoiceChannel  } from 'discord.js';
 import defaultConfig  from '../config'
 import { addPomodoro, countUserPomdoros } from '../db/pomodoros';
-import { secondsToTimerStr , PomodoroMachine } from '../functions/pomodoroMachine';
 import {PomodoroTextController} from '../functions/pomodoroTextController';
 // import { createDiscordPomodoro } from './discordPomodoro';
 import { playSoundDiscord } from './voice';
@@ -133,15 +132,15 @@ const helpText = () => {
 Pausar um pomodoro: ${commandsArrayToText(textCommands.pause)}
 Retomar um pomodoro: ${commandsArrayToText(textCommands.resume)} 
 Cancelar ciclo: ${commandsArrayToText(textCommands.cancel)}
-Modo soneca (5 min extra de pausa): ${commandsArrayToText(textCommands.sleep)} `
+Modo soneca (5 min extra de pausa): ${commandsArrayToText(textCommands.sleep)}`
 }
 
 const textCommands = {
-    start: ['start' , 'comecar' , 'começar' , 'valendo' , 'bora'],
-    pause: ['pausa' , 'pause'],
+    start:  ['start' , 'comecar' , 'começar' , 'valendo' , 'bora' , 'bo'],
+    pause:  ['pausa' , 'pause'],
     resume: ['resume' , 'retomar' , 'volta' , 'voltar'],
     cancel: ['cancel' , 'cancelar' , 'stop'],
-    sleep: ['sleep' , 'soneca']
+    sleep:  ['sleep' , 'soneca']
 };
 
 const handleTextChanelMsg = async (textChanel: TextChannel, voiceChanel: VoiceChannel ,command: string , args: string[] , client: Client) => {
