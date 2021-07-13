@@ -2,17 +2,18 @@ import { Message, TextChannel, VoiceChannel } from "discord.js";
 import {PomodoroMachine, secondsToTimerStr} from './pomodoroMachine';
 import Timer from 'timer.js'
 import { playSoundDiscord } from "../discord/voice";
+import { addPomodoros, createUserIfNew } from "../db/discord";
 
 type Status = "pomdoro-on" | "short-rest" | "long-rest" | "inactive" | "pause";
 
 export class PomodoroTextController {
 
-    concentrationTime = 25 * 60;
-    shortRest = 5 * 60;
-    longRest = 15 * 60;
-    sleepTime = 5 * 60;
+    concentrationTime = .1 * 60;
+    shortRest = .1 * 60;
+    longRest = .1 * 60;
+    sleepTime = .1 * 60;
     totalCicles = 4;
-    tickTime = 30;
+    tickTime = 2;
 
     private guildsPomdoros : {
         [key: string] : {
@@ -74,16 +75,23 @@ export class PomodoroTextController {
         guild.timer.on('onend' , () => {
             textChanel.send(`fim do pomodoro #${guild.pomodorosBeggined}`);
             guild.timerMessage.delete();
-            this.startRest(textChanel , voiceChanel , guild.pomodorosBeggined == this.totalCicles ? 'long' : 'short' ).then( () => {
-
-            } ).catch(err => {
-
-            })
+            this.onEndConcentration(textChanel , voiceChanel).catch( err => {
+                console.error(err);
+            } ).finally( () => 
+                this.startRest(textChanel , voiceChanel , guild.pomodorosBeggined == this.totalCicles ? 'long' : 'short' )
+            ).then(
+                () => {return }
+            )
         } )
         guild.timer.on('ontick' , () => {
             guild.totalTicks += 1;
             guild.timerMessage.edit(secondsToTimerStr(guild.totalTicks * this.tickTime)).then(() => {})
         })
+
+        // para separar o básico do pomodoro com outras funcionalidades, colocar
+        // tudo que não diz respeito a msgs, timer em outras funlçoes
+        await this.onStartConcentration(textChanel , voiceChanel);
+        
         guild.timer.start(this.concentrationTime)
     }
 
@@ -131,6 +139,11 @@ export class PomodoroTextController {
 
     }
 
+    private getUsersFromChannel(voiceChanel: VoiceChannel) {
+        const users =  voiceChanel.members.array().map( guildMember => guildMember.user ).filter(user => !user.bot)
+        return users;
+    }
+
     cancel(textChanel: TextChannel, voiceChanel: VoiceChannel) {
         const key = this.getKey(textChanel , voiceChanel);
         if (!this.guildsPomdoros[key]) {
@@ -156,6 +169,22 @@ export class PomodoroTextController {
         guild.pomodorosBeggined = 0;
         guild.status ='inactive';
         guild.totalTicks = 0;
+        playSoundDiscord(voiceChanel , 'parou');
+    }
+
+    private async onEndConcentration(textChanel: TextChannel, voiceChanel: VoiceChannel) {
+        const users = this.getUsersFromChannel(voiceChanel);
+        await addPomodoros(users.map(user => user.id))
+    }
+    
+    private onEndPomodoroCicle(textChanel: TextChannel, voiceChanel: VoiceChannel) {
+
+    }
+
+    private async onStartConcentration(textChanel: TextChannel, voiceChanel: VoiceChannel) {
+        const users = this.getUsersFromChannel(voiceChanel);
+        const usersIds = users.map(user => user.id);
+        await createUserIfNew(usersIds);
     }
 
     private startRest = async ( textChanel: TextChannel, voiceChanel: VoiceChannel , type : 'short' | 'long' ) => {

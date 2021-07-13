@@ -1,6 +1,6 @@
 import {  Client, DMChannel, Message, NewsChannel, TextChannel, VoiceChannel  } from 'discord.js';
 import defaultConfig  from '../config'
-import { addPomodoro, countUserPomdoros } from '../db/pomodoros';
+import { addPomodoro, countUserPomdoros } from '../db/pomodoros_legacy';
 import {PomodoroTextController} from '../functions/pomodoroTextController';
 // import { createDiscordPomodoro } from './discordPomodoro';
 import { playSoundDiscord } from './voice';

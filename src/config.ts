@@ -1,7 +1,7 @@
-const local = process.env.NODE_ENV === 'local';
+export const local = process.env.NODE_ENV === 'local';
+require('dotenv').config()
 if (local) {
 	console.log('local')
-	require('dotenv').config()
 } else {
 	console.log('prod')
 }
