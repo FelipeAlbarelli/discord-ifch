@@ -1,5 +1,4 @@
 import {db} from './config';
-import {Guild,Pomodoro,dbUser} from '../models/db';
 import { User, VoiceChannel } from 'discord.js';
 import { firestore } from 'firebase-admin';
 
