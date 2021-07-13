@@ -12,7 +12,7 @@ export class PomodoroTextController {
     shortRest = .1 * 60;
     longRest = .1 * 60;
     sleepTime = .1 * 60;
-    totalCicles = 4;
+    pomodorosOnCicle = 2;
     tickTime = 2;
 
     private guildsPomdoros : {
@@ -78,7 +78,7 @@ export class PomodoroTextController {
             this.onEndConcentration(textChanel , voiceChanel).catch( err => {
                 console.error(err);
             } ).finally( () => 
-                this.startRest(textChanel , voiceChanel , guild.pomodorosBeggined == this.totalCicles ? 'long' : 'short' )
+                this.startRest(textChanel , voiceChanel , guild.pomodorosBeggined == this.pomodorosOnCicle ? 'long' : 'short' )
             ).then(
                 () => {return }
             )
@@ -174,7 +174,10 @@ export class PomodoroTextController {
 
     private async onEndConcentration(textChanel: TextChannel, voiceChanel: VoiceChannel) {
         const users = this.getUsersFromChannel(voiceChanel);
-        await addPomodoros(users.map(user => user.id))
+        const key = this.getKey(textChanel , voiceChanel);
+        const guild = this.guildsPomdoros[key]; 
+        console.log('end concentration')
+        await addPomodoros(users.map(user => user.id) , guild.pomodorosBeggined == this.pomodorosOnCicle)
     }
     
     private onEndPomodoroCicle(textChanel: TextChannel, voiceChanel: VoiceChannel) {

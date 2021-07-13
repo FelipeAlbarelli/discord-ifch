@@ -10,6 +10,8 @@ import * as admin from 'firebase-admin';
 const userCollection = db.collection('users_2' + (local ? '__test' : ''));
 const configCollection = db.collection('config');
 
+console.log(local)
+
 const getUser = async (id : number | string , possibleEmpty = true) => {
     try {
         const userSnap = await userCollection.doc(`${id}`).get();

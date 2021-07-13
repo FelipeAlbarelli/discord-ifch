@@ -1,5 +1,5 @@
-export const local = process.env.NODE_ENV === 'local';
 require('dotenv').config()
+export const local = process.env.NODE_ENV === 'local';
 if (local) {
 	console.log('local')
 } else {
