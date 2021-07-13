@@ -1,13 +1,9 @@
 require('dotenv').config()
-export const local = process.env.NODE_ENV === 'local';
+export const local = () => process.env.NODE_ENV === 'local';
 if (local) {
 	console.log('local')
 } else {
 	console.log('prod')
-}
-
-export const log = msg => {
-    process.env.NODE_ENV ? console.log(msg) : null;
 }
 
 const defaultConfig = {

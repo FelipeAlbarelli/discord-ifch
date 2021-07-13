@@ -4,79 +4,29 @@ import { addPomodoro, countUserPomdoros } from '../db/pomodoros_legacy';
 import {PomodoroTextController} from '../functions/pomodoroTextController';
 // import { createDiscordPomodoro } from './discordPomodoro';
 import { playSoundDiscord } from './voice';
-
+import { getUser } from '../db/discord'
 
 const {prefix} = defaultConfig;
 
 const pomodoroCtrl = new PomodoroTextController();
 
-const handleDM = (message: Message, voiceChanel, command) => {
+const handleDM = async (message: Message, voiceChanel, command) => {
 
-    countUserPomdoros(message.author.id, 
-        command === 'today' ?
-        'today' :
-        (command === 'week' ?
-        'this_week' :
-        'always')
-        ).then( r => {
-        message.reply(`pomodoros registrados : ${r}`)
-    })
+    try {
+        const discordId = message.author.id;
+        const user = await getUser(discordId);
+
+        message.reply(
+            `total money: ${user?.money ?? 0 }` + `\n` +
+            `total pomodoros : ${user?.pomodoros?.length ?? 0}`
+        )
+
+    } catch (err) {
+        console.error(err)
+    }
+
+    
 }
-
-// const handleCommandTextChanel = (textC: TextChannel, voiceC: VoiceChannel, command: string, pars?: string[]) => {
-
-//     const voiceId = voiceC.id;
-
-//     switch (command) {
-//         case 'começar':
-//         case 'valendo':
-//         case 'start':
-//             if (guildsPomdoros[voiceId] === undefined) {
-//                 guildsPomdoros[voiceId] = createDiscordPomodoro(textC, voiceC);
-//             }
-//             // playSound(voiceC, "valendo").catch(hEr);
-//             if (guildsPomdoros[voiceId].pomodoring === true ) {
-//                 textC.send(`já está ocorrendo um pomodoro no canal ${textC.name}`);
-//                 return;
-//             }
-//             guildsPomdoros[voiceId].start();
-//             break;
-//         case 'stop':
-//         case 'cancelar':
-//             guildsPomdoros[voiceId].cancelOne();
-//             delete guildsPomdoros[voiceId];
-//             textC.send('pomodoro cancelado')
-//             break;
-//         case 'status':
-//             if (guildsPomdoros[voiceId] == undefined){
-//               textC.send("bot inativo");
-//               return;
-//             }
-//             textC.send(
-//               guildsPomdoros[voiceId].active ?
-//               (guildsPomdoros[voiceId].pomodoring ?
-//               'em concentração' :
-//               'em pausa') :
-//               'bot inativo'
-//             )
-//             break;
-//         case 'test-sound':
-//             playSound(voiceC, "valendo");
-//             break;
-//         case 'ajuda':
-//         case 'help':
-//           textC.send(
-//             `lista de comandos:\n`+
-//             ` ${prefix}start: começa ciclo de pomodoro\n`+
-//             ` ${prefix}cancelar: cancela ciclo de pomoro\n` +
-//             ` ${prefix}status: informa se o estado atual é "concentração", "pausa" ou "inativo"`
-//             );
-//           break;
-//         default:
-//           textC.send(`comando ${command} inexistente, use ${prefix}help para uma breve lista de comandos`);
-//           break;
-//     }
-// }
 
 const getInfoFromComment = (message: Message) => {
     const args = message.content.slice(prefix.length).trim().split(/ +/);
